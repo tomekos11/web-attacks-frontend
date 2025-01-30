@@ -665,6 +665,16 @@
     "@types/node" "*"
     "@types/send" "*"
 
+"@types/trusted-types@^2.0.7":
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/@types/trusted-types/-/trusted-types-2.0.7.tgz#baccb07a970b91707df3a3e8ba6896c57ead2d11"
+  integrity sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==
+
+"@types/web-bluetooth@^0.0.20":
+  version "0.0.20"
+  resolved "https://registry.yarnpkg.com/@types/web-bluetooth/-/web-bluetooth-0.0.20.tgz#f066abfcd1cbe66267cdbbf0de010d8a41b41597"
+  integrity sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==
+
 "@typescript-eslint/eslint-plugin@8.22.0":
   version "8.22.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.22.0.tgz#63a1b0d24d85a971949f8d71d693019f58d2e861"
@@ -896,6 +906,28 @@
   version "3.5.13"
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.5.13.tgz#87b309a6379c22b926e696893237826f64339b6f"
   integrity sha512-/hnE/qP5ZoGpol0a5mDi45bOd7t3tjYJBjsgCsivow7D48cJeV5l05RD82lPqi7gRiphZM37rnhW1l6ZoCNNnQ==
+
+"@vueuse/core@^12.5.0":
+  version "12.5.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-12.5.0.tgz#1321c75132c4f20f223e6313587ebeeec79957f2"
+  integrity sha512-GVyH1iYqNANwcahAx8JBm6awaNgvR/SwZ1fjr10b8l1HIgDp82ngNbfzJUgOgWEoxjL+URAggnlilAEXwCOZtg==
+  dependencies:
+    "@types/web-bluetooth" "^0.0.20"
+    "@vueuse/metadata" "12.5.0"
+    "@vueuse/shared" "12.5.0"
+    vue "^3.5.13"
+
+"@vueuse/metadata@12.5.0":
+  version "12.5.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-12.5.0.tgz#8f1778a2894bdda2bf458054377a379d40276306"
+  integrity sha512-Ui7Lo2a7AxrMAXRF+fAp9QsXuwTeeZ8fIB9wsLHqzq9MQk+2gMYE2IGJW48VMJ8ecvCB3z3GsGLKLbSasQ5Qlg==
+
+"@vueuse/shared@12.5.0":
+  version "12.5.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-12.5.0.tgz#b93af7ab0fd6a8d879808c9bf37d540dac01da13"
+  integrity sha512-vMpcL1lStUU6O+kdj6YdHDixh0odjPAUM15uJ9f7MY781jcYkIwFA4iv2EfoIPO6vBmvutI1HxxAwmf0cx5ISQ==
+  dependencies:
+    vue "^3.5.13"
 
 abort-controller@^3.0.0:
   version "3.0.0"
@@ -1494,6 +1526,13 @@ destroy@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.2.0.tgz#4803735509ad8be552934c67df614f94e66fa015"
   integrity sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==
+
+dompurify@^3.2.3:
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.2.3.tgz#05dd2175225324daabfca6603055a09b2382a4cd"
+  integrity sha512-U1U5Hzc2MO0oW3DF+G9qYN0aT7atAou4AgI0XjWz061nyBPbdxkfdhfy5uMgGn6+oLFCfn44ZGbdDqCzVmlOWA==
+  optionalDependencies:
+    "@types/trusted-types" "^2.0.7"
 
 dot-case@^3.0.4:
   version "3.0.4"
@@ -3715,7 +3754,7 @@ vue-tsc@^2.0.29:
     "@volar/typescript" "~2.4.11"
     "@vue/language-core" "2.2.0"
 
-vue@^3.4.18:
+vue@^3.4.18, vue@^3.5.13:
   version "3.5.13"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.5.13.tgz#9f760a1a982b09c0c04a867903fc339c9f29ec0a"
   integrity sha512-wmeiSMxkZCSc+PM2w2VRsOYAZC8GdipNFRTsLSfodVqI9mbejKeXEGr8SckuLnrQPGe3oJN5c3K0vpoU9q/wCQ==

