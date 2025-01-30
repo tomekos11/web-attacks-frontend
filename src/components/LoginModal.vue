@@ -37,6 +37,7 @@
 import { ref } from "vue";
 import { Notify } from "quasar";
 import axios from "axios";
+import { api } from "src/boot/axios";
 
 const isModalOpen = defineModel<boolean>();
 const username = ref<string>("");
@@ -48,7 +49,7 @@ const emit = defineEmits(['update-navbar'])
 const handleLogin = async () => {
   try {
     errorMessage.value = "";
-    const response = await axios.post("http://localhost:5000/login", {
+    const response = await api.post("http://localhost:5000/login", {
       username: username.value,
       password: password.value,
     }, {

@@ -103,6 +103,7 @@ import { Cookies, Notify } from 'quasar';
 import AddPostModal from './components/AddPostModal.vue';
 import { useStorage } from '@vueuse/core';
 import LoginModal from './components/LoginModal.vue';
+import { api } from './boot/axios';
 
 interface Post {
   id: number;
@@ -129,7 +130,7 @@ const posts = ref<Post[]>([]);
 // Funkcja do pobierania postów
 const getPosts = async () => {
   try {
-    const response = await axios.get('http://localhost:5000/posts', {
+    const response = await api.get('http://localhost:5000/posts', {
       withCredentials: true
     });
     posts.value = response.data;
@@ -140,7 +141,7 @@ const getPosts = async () => {
 
 const checkIfAdmin = async() => {
   try {
-    const response = await axios.get('http://localhost:5000/check-admin', {
+    const response = await api.get('http://localhost:5000/check-admin', {
       withCredentials: true
     });
     // Jeśli odpowiedź jest pozytywna, ustawiamy flagę isAdmin na true
@@ -158,7 +159,7 @@ const checkIfAdmin = async() => {
 
 const removePost = async (id: number) => {
   try {
-    await axios.delete(`http://localhost:5000/posts/${id}`, {
+    await api.delete(`/posts/${id}`, {
       withCredentials: true
     })
     const index = posts.value.findIndex(el => el.id === id)

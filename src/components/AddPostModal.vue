@@ -153,6 +153,7 @@
 import { Notify } from 'quasar';
 import axios from 'axios';
 import { ref } from 'vue';
+import { api } from 'src/boot/axios';
 
 // Funkcja do dodawania nowego postu
 const newPost = ref({ title: '', content: '' });
@@ -160,7 +161,7 @@ const showModal = defineModel<boolean>();
 
 const addPost = async () => {
   try {
-    await axios.post('http://localhost:5000/posts', {...newPost.value, isNew: true }, {
+    await api.post('http://localhost:5000/posts', {...newPost.value, isNew: true }, {
       withCredentials: true
     });
     newPost.value = { title: '', content: '' }; // Reset formularza
