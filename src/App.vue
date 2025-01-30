@@ -130,7 +130,7 @@ const posts = ref<Post[]>([]);
 // Funkcja do pobierania postów
 const getPosts = async () => {
   try {
-    const response = await api.get('http://localhost:5000/posts', {
+    const response = await api.get('/posts', {
       withCredentials: true
     });
     posts.value = response.data;
@@ -141,7 +141,7 @@ const getPosts = async () => {
 
 const checkIfAdmin = async() => {
   try {
-    const response = await api.get('http://localhost:5000/check-admin', {
+    const response = await api.get('/check-admin', {
       withCredentials: true
     });
     // Jeśli odpowiedź jest pozytywna, ustawiamy flagę isAdmin na true

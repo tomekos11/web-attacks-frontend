@@ -49,7 +49,7 @@ const emit = defineEmits(['update-navbar'])
 const handleLogin = async () => {
   try {
     errorMessage.value = "";
-    const response = await api.post("http://localhost:5000/login", {
+    const response = await api.post("/login", {
       username: username.value,
       password: password.value,
     }, {

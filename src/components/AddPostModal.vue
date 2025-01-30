@@ -161,7 +161,7 @@ const showModal = defineModel<boolean>();
 
 const addPost = async () => {
   try {
-    await api.post('http://localhost:5000/posts', {...newPost.value, isNew: true }, {
+    await api.post('/posts', {...newPost.value, isNew: true }, {
       withCredentials: true
     });
     newPost.value = { title: '', content: '' }; // Reset formularza
