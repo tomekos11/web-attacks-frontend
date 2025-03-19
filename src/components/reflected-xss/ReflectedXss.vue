@@ -28,7 +28,7 @@
             label="Wpisz swoje imie"
             outlined
             class="q-my-md"
-            style="width: 20%; min-width: 200px"
+            style="width: 20%; min-width: min(200px, 100%)"
           />
           <q-btn label="Zatwierdź swoje imie" @click="confirmName" />
         </div>
