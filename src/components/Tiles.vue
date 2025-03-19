@@ -1,15 +1,20 @@
 <template>
-  <q-page class="row justify-center items-center q-pa-md">
-    <router-link
-      v-for="attack in attacks"
-      :key="attack.name"
-      :to="{
-        name: attack.link,
-      }"
-      class="q-ma-md tile-card"
-    >
-      <div class="text-h6 text-center">{{ attack.name }}</div>
-    </router-link>
+  <q-page class="q-pa-md">
+    <h1 style="font-size: 30px; line-height: normal" class="text-center">
+      Wybierz rodzaj ataku, który chcesz przetestować
+    </h1>
+    <div class="tiles-parent justify-center items-center">
+      <router-link
+        v-for="attack in attacks"
+        :key="attack.name"
+        :to="{
+          name: attack.link,
+        }"
+        class="q-ma-md tile-card"
+      >
+        <div class="text-h6 text-center">{{ attack.name }}</div>
+      </router-link>
+    </div>
   </q-page>
 </template>
 
@@ -23,13 +28,22 @@ const attacks = [
 </script>
 
 <style scoped>
+.tiles-parent {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-content: center;
+}
+
 .tile-card {
   width: 45%;
-  min-height: 150px;
+  max-height: 350px; /* Maksymalna wysokość karty */
+  height: 20vh; /* Wysokość zależna od wysokości ekranu */
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ff8a00, #e52e71);
+  background: linear-gradient(135deg, #027be3, #009688); /* Użycie kolorów z Quasara */
   color: white;
   border-radius: 12px;
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
@@ -37,6 +51,7 @@ const attacks = [
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
+  padding: 20px; /* Padding dla lepszego wyrównania */
 }
 
 .tile-card:hover {
