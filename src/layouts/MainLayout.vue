@@ -1,102 +1,64 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh lpR fFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
+        <q-toolbar-title class="flex justify-between">
+          <div class="flex flex-center column">
+            {{ $route.name?.toString().replace('-', ' ').toUpperCase() }}
+            <q-badge color="blue-11" class="cursor-pointer">
+              <a> Zmień rodzaj ataku </a>
+              <q-popup-proxy>
+                <q-list dense class="bg-white">
+                  <q-item clickable to="/stored-xss"> Stored XSS </q-item>
+                  <q-item clickable to="/reflected-xss"> Reflected XSS </q-item>
+                  <q-item clickable to="/dom-based-xss"> Dom Based XSS </q-item>
+                  <q-item clickable to="/blind-xss"> Blind XSS </q-item>
+                </q-list>
+              </q-popup-proxy>
+            </q-badge>
+          </div>
+          <div class="flex column">
+            <div>
+              <q-avatar>
+                <q-img :src="`https://cdn.quasar.dev/img/avatar${userStore.userNumber}.jpg`" />
+              </q-avatar>
+              {{ userStore.username }}
+              <q-icon v-if="userStore.isAdmin" name="star" color="orange-7" />
+            </div>
+            <div
+              class="text-caption text-right text-bold cursor-pointer"
+              @click="showLoginModal = true"
+            >
+              Masz już konto?
+            </div>
+          </div>
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
-
     <q-page-container>
-      <router-view />
+      <q-page>
+        <Tiles v-if="$route.path === '/'" />
+        <router-view v-else />
+      </q-page>
     </q-page-container>
+
+    <login-modal v-model="showLoginModal" @update-navbar="userStore.fetchUserData" />
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue';
+import { useUserStore } from 'src/stores/user'
+import { defineAsyncComponent, onMounted, ref } from 'vue'
 
-const linksList: EssentialLinkProps[] = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-];
+const LoginModal = defineAsyncComponent(() => import('components/LoginModal.vue'))
+const Tiles = defineAsyncComponent(() => import('components/Tiles.vue'))
 
-const leftDrawerOpen = ref(false);
+const showLoginModal = ref(false)
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
+const userStore = useUserStore()
+
+onMounted(async () => {
+  await userStore.fetchUserData()
+})
 </script>
