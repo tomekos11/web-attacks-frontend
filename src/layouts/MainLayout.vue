@@ -20,10 +20,10 @@
           <div class="flex column">
             <div>
               <q-avatar>
-                <q-img :src="`https://cdn.quasar.dev/img/avatar${userNumber}.jpg`" />
+                <q-img :src="`https://cdn.quasar.dev/img/avatar${userStore.userNumber}.jpg`" />
               </q-avatar>
-              {{ userName }}
-              <q-icon v-if="isAdmin" name="star" color="orange-7" />
+              {{ userStore.username }}
+              <q-icon v-if="userStore.isAdmin" name="star" color="orange-7" />
             </div>
             <div
               class="text-caption text-right text-bold cursor-pointer"
@@ -43,51 +43,22 @@
       </q-page>
     </q-page-container>
 
-    <login-modal v-model="showLoginModal" @update-navbar="updateNavbar" />
+    <login-modal v-model="showLoginModal" @update-navbar="userStore.fetchUserData" />
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { Cookies } from 'quasar'
-import { api } from 'src/boot/axios'
+import { useUserStore } from 'src/stores/user'
 import { defineAsyncComponent, onMounted, ref } from 'vue'
 
 const LoginModal = defineAsyncComponent(() => import('components/LoginModal.vue'))
 const Tiles = defineAsyncComponent(() => import('components/Tiles.vue'))
 
-const userNumber = ref('')
-const userName = ref('')
-const isAdmin = ref(false)
-
 const showLoginModal = ref(false)
 
-const updateNavbar = async () => {
-  console.log(Cookies.get('userNumber'))
-  console.log(Cookies.get('userName'))
-
-  userNumber.value = Cookies.get('userNumber')
-  userName.value = Cookies.get('userName')
-  await checkIfAdmin()
-}
+const userStore = useUserStore()
 
 onMounted(async () => {
-  await updateNavbar()
+  await userStore.fetchUserData()
 })
-
-const checkIfAdmin = async () => {
-  try {
-    console.log(Cookies.getAll())
-
-    const response = await api.get('/check-admin', {
-      withCredentials: true,
-    })
-    isAdmin.value = response.data.message
-  } catch (error) {
-    if (error.response && error.response.status === 403) {
-      isAdmin.value = false
-    } else {
-      console.error('Błąd przy sprawdzaniu uprawnień:', error)
-    }
-  }
-}
 </script>

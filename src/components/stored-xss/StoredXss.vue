@@ -49,7 +49,7 @@
                       })
                     }}
                     <q-btn
-                      v-if="isAdmin"
+                      v-if="userStore.isAdmin"
                       class="self-end q-mt-sm"
                       color="red-7"
                       icon="delete"
@@ -87,6 +87,7 @@ import DOMPurify from 'dompurify'
 import { useStorage } from '@vueuse/core'
 import { api } from 'src/boot/axios'
 import { Notify } from 'quasar'
+import { useUserStore } from 'src/stores/user'
 
 const AddPostModal = defineAsyncComponent(() => import('components/AddPostModal.vue'))
 
@@ -103,9 +104,9 @@ const onlyHtml = ref(false)
 const showAddPostModal = ref(false)
 
 const isSafe = useStorage('is-safe', true)
-const isAdmin = ref(false)
 
 const posts = ref<Post[]>([])
+const userStore = useUserStore()
 
 const getPosts = async () => {
   try {
@@ -138,27 +139,24 @@ const removePost = async (id: number) => {
   }
 }
 
-onMounted(() => {
-  getPosts()
+onMounted(async () => {
+  await getPosts()
 })
 
 const socket = new WebSocket('ws://localhost:5000')
 
+interface WebSocketMessage {
+  message: string
+  post: Post
+  type: 'post_added'
+}
+
 // Po nawiązaniu połączenia, nasłuchuj wiadomości
 socket.onmessage = (event) => {
-  const data = JSON.parse(event.data)
+  const data = JSON.parse(event.data) as WebSocketMessage
 
   if (data.type === 'post_added') {
-    const post: Post = {
-      content: data.content,
-      title: data.title,
-      createdAt: data.createdAt,
-      userName: data.userName,
-      userNumber: data.userNumber,
-      id: data.id,
-    }
-
-    posts.value.unshift(post)
+    posts.value.unshift(data.post)
   }
 }
 
