@@ -76,6 +76,8 @@ onMounted(async () => {
 
 const checkIfAdmin = async () => {
   try {
+    console.log(Cookies.getAll())
+
     const response = await api.get('/check-admin', {
       withCredentials: true,
     })
