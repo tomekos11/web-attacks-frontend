@@ -13,6 +13,7 @@
                   <q-item clickable to="/reflected-xss"> Reflected XSS </q-item>
                   <q-item clickable to="/dom-based-xss"> Dom Based XSS </q-item>
                   <q-item clickable to="/blind-xss"> Blind XSS </q-item>
+                  <q-item clickable to="/classic-sql-injection"> Classic SQL Injection </q-item>
                 </q-list>
               </q-popup-proxy>
             </q-badge>

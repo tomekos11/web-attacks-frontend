@@ -26,6 +26,11 @@ const routes: RouteRecordRaw[] = [
         path: '/blind-xss',
         component: () => import('components/blind-xss/BlindXss.vue'),
       },
+      {
+        name: 'classic-sql-injection',
+        path: '/classic-sql-injection',
+        component: () => import('components/classic-sql-injection/ClassicSqlInjection.vue'),
+      }
     ],
   },
 

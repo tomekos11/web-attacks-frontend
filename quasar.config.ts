@@ -64,7 +64,7 @@ export default defineConfig((/* ctx */) => {
 
       vitePlugins: [
         [
-          'vite-plugin-checker',
+          // 'vite-plugin-checker',
           {
             vueTsc: true,
             eslint: {
