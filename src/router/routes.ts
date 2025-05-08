@@ -40,6 +40,11 @@ const routes: RouteRecordRaw[] = [
         name: 'error-based-sql-injection',
         path: '/error-based-sql-injection',
         component: () => import('components/error-based-sql-injection/ErrorBasedSqlInjection.vue'),
+      },
+      {
+        name: 'command-injection',
+        path: '/command-injection',
+        component: () => import('components/command-injection/CommandInjection.vue'),
       }
     ],
   },
