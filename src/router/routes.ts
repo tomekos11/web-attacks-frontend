@@ -35,6 +35,11 @@ const routes: RouteRecordRaw[] = [
         name: 'union-based-sql-injection',
         path: '/union-based-sql-injection',
         component: () => import('components/union-based-sql-injection/UnionBasedSqlInjection.vue'),
+      },
+      {
+        name: 'error-based-sql-injection',
+        path: '/error-based-sql-injection',
+        component: () => import('components/error-based-sql-injection/ErrorBasedSqlInjection.vue'),
       }
     ],
   },
