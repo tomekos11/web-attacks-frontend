@@ -17,6 +17,7 @@
                   <q-item clickable to="/union-based-sql-injection"> Union Based SQL Injection </q-item>
                   <q-item clickable to="/error-based-sql-injection"> Error Based SQL Injection </q-item>
                   <q-item clickable to="/command-injection"> Command Injection </q-item>
+                  <q-item clickable to="/path-traversal"> Path Traversal </q-item>
                 </q-list>
               </q-popup-proxy>
             </q-badge>

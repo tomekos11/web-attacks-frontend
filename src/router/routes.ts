@@ -45,6 +45,11 @@ const routes: RouteRecordRaw[] = [
         name: 'command-injection',
         path: '/command-injection',
         component: () => import('components/command-injection/CommandInjection.vue'),
+      },
+      {
+        name: 'path-traversal',
+        path: '/path-traversal',
+        component: () => import('components/path-traversal/PathTraversal.vue'),
       }
     ],
   },

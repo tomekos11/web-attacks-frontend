@@ -39,6 +39,11 @@ const attacks = [
     description: 'Pozyskiwanie danych na podstawie komunikatów błędów SQL',
     link: 'error-based-sql-injection'
   },
+  {
+    name: 'Path Traversal',
+    description: 'Atak polegający na uzyskaniu dostępu do plików systemowych',
+    link: 'path-traversal'
+  }
 ]
 </script>
 
