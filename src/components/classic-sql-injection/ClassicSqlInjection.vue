@@ -166,6 +166,47 @@
           </q-card-section>
         </q-card>
       </q-expansion-item>
+      <q-expansion-item expand-separator icon="code" label="Przykłady błędnych zapytań i ich poprawy">
+        <q-card style="max-width: 600px">
+          <q-card-section>
+            <p>Oto typowe przykłady błędnych zapytań SQL oraz sposoby ich poprawy:</p>
+            <ul>
+              <li>
+                <p><strong>❌ Błędne:</strong></p>
+                <code>const query = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'"</code>
+                <p>🔴 Wrażliwe na SQL Injection – użytkownik może wstrzyknąć dowolny kod SQL.</p>
+              </li>
+              <li>
+                <p><strong>✅ Poprawne:</strong></p>
+                <code>const query = "SELECT * FROM users WHERE username = ? AND password = ?"</code>
+                <code>db.execute(query, [username, password])</code>
+                <p>🟢 Parametryzowane zapytanie chroni przed SQL Injection.</p>
+              </li>
+
+              <li>
+                <p><strong>❌ Błędne (PHP):</strong></p>
+                <pre><code>$sql = "DELETE FROM users WHERE id = $_GET['id']";</code></pre>
+                <p>🔴 Atakujący może przekazać <code>?id=1 OR 1=1</code> i usunąć wszystkich użytkowników.</p>
+              </li>
+              <li>
+                <p><strong>✅ Poprawne (PHP - PDO):</strong></p>
+                <pre><code>$stmt = $pdo->prepare("DELETE FROM users WHERE id = :id");
+$stmt->execute(['id' => $_GET['id']]);</code></pre>
+                <p>🟢 Użycie prepared statements zabezpiecza przed wstrzyknięciem kodu SQL.</p>
+              </li>
+
+              <li>
+                <p><strong>❌ Błędne (Laravel):</strong></p>
+                <pre><code>$users = DB::select("SELECT * FROM users WHERE email = '$email'");</code></pre>
+              </li>
+              <li>
+                <p><strong>✅ Poprawne (Laravel):</strong></p>
+                <pre><code>$users = DB::select("SELECT * FROM users WHERE email = ?", [$email]);</code></pre>
+              </li>
+            </ul>
+          </q-card-section>
+        </q-card>
+      </q-expansion-item>
 
     </q-list>
 
