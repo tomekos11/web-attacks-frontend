@@ -50,16 +50,19 @@ const routes: RouteRecordRaw[] = [
         name: 'path-traversal',
         path: '/path-traversal',
         component: () => import('components/path-traversal/PathTraversal.vue'),
-      }
+      },
+      {
+        name: 'security',
+        path: '/security',
+        component: () => import('pages/Security.vue'),
+        meta: { admin: true },
+      },
     ],
   },
 
   // Always leave this as last one,
   // but you can also remove it
-  {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
-  },
+  { path: '/:catchAll(.*)*', component: () => import('pages/ErrorNotFound.vue') },
 ]
 
 export default routes

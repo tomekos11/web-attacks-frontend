@@ -22,6 +22,13 @@
               </q-popup-proxy>
             </q-badge>
           </div>
+
+          <div class="q-ml-auto q-mr-xl self-center">
+            <router-link to="/security" class="text-white" style="text-decoration: none;">
+              Security
+            </router-link>
+          </div>
+
           <div class="flex column">
             <div>
               <q-avatar>
@@ -30,10 +37,7 @@
               {{ userStore.username }}
               <q-icon v-if="userStore.isAdmin" name="star" color="orange-7" />
             </div>
-            <div
-              class="text-caption text-right text-bold cursor-pointer"
-              @click="showLoginModal = true"
-            >
+            <div class="text-caption text-right text-bold cursor-pointer" @click="showLoginModal = true">
               Masz już konto?
             </div>
           </div>
@@ -54,7 +58,7 @@
 
 <script setup lang="ts">
 import { useUserStore } from 'src/stores/user'
-import { defineAsyncComponent, onMounted, ref } from 'vue'
+import { defineAsyncComponent, ref } from 'vue'
 
 const LoginModal = defineAsyncComponent(() => import('components/LoginModal.vue'))
 const Tiles = defineAsyncComponent(() => import('components/Tiles.vue'))
@@ -62,8 +66,4 @@ const Tiles = defineAsyncComponent(() => import('components/Tiles.vue'))
 const showLoginModal = ref(false)
 
 const userStore = useUserStore()
-
-onMounted(async () => {
-  await userStore.fetchUserData()
-})
 </script>

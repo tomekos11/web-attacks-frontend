@@ -1,11 +1,12 @@
-import { defineRouter } from '#q-app/wrappers';
+import { defineRouter } from '#q-app/wrappers'
 import {
   createMemoryHistory,
   createRouter,
   createWebHashHistory,
   createWebHistory,
-} from 'vue-router';
-import routes from './routes';
+} from 'vue-router'
+import routes from './routes'
+import { useUserStore } from 'src/stores/user'
 
 /*
  * If not building with SSR mode, you can
@@ -19,7 +20,9 @@ import routes from './routes';
 export default defineRouter(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory);
+    : process.env.VUE_ROUTER_MODE === 'history'
+      ? createWebHistory
+      : createWebHashHistory
 
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
@@ -29,7 +32,25 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
-  });
+  })
 
-  return Router;
-});
+  Router.beforeEach(async (to, from, next) => {
+    const user = useUserStore() // np. z localStorage, Vuex, Pinia
+
+    if (!user.username) {
+      await useUserStore().fetchUserData()
+    }
+    console.log(to.meta.admin)
+    console.log(user.isAdmin)
+
+    if (to.meta.admin && user.isAdmin) {
+      return next()
+    } else if (to.meta.admin && (!user || !user.isAdmin)) {
+      return next('/')
+    }
+
+    next()
+  })
+
+  return Router
+})
