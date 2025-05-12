@@ -24,6 +24,26 @@ const attacks = [
   { name: 'Reflected XSS', description: 'XD', link: 'reflected-xss' },
   { name: 'DOM-Based XSS', description: 'XD', link: 'dom-based-xss' },
   { name: 'Blind XSS', description: 'XD', link: 'blind-xss' },
+  {
+    name: 'Classic SQL Injection',
+    description: 'Prosty atak np. poprzez "OR 1=1"',
+    link: 'classic-sql-injection'
+  },
+  {
+    name: 'Union-Based SQL Injection',
+    description: 'Wykorzystanie UNION do pozyskania danych z innych tabel',
+    link: 'union-based-sql-injection'
+  },
+  {
+    name: 'Error-Based SQL Injection',
+    description: 'Pozyskiwanie danych na podstawie komunikatów błędów SQL',
+    link: 'error-based-sql-injection'
+  },
+  {
+    name: 'Path Traversal',
+    description: 'Atak polegający na uzyskaniu dostępu do plików systemowych',
+    link: 'path-traversal'
+  }
 ]
 </script>
 
