@@ -9,22 +9,11 @@
         </p>
 
         <q-form @submit.prevent="handleLogin">
-          <q-input
-            v-model.trim="username"
-            label="Login (payload SQL)"
-            outlined
-            class="q-my-md"
-            style="width: 40%; min-width: min(300px, 100%)"
-          />
+          <q-input v-model.trim="username" label="Login (payload SQL)" outlined class="q-my-md"
+            style="width: 40%; min-width: min(300px, 100%)" />
 
-          <q-input
-            v-model.trim="password"
-            type="password"
-            label="Hasło"
-            outlined
-            class="q-my-md"
-            style="width: 40%; min-width: min(300px, 100%)"
-          />
+          <q-input v-model.trim="password" type="password" label="Hasło" outlined class="q-my-md"
+            style="width: 40%; min-width: min(300px, 100%)" />
 
           <q-btn color="primary" type="submit" label="Zaloguj się" />
         </q-form>
@@ -77,12 +66,41 @@
       <q-expansion-item expand-separator icon="warning" label="Dlaczego jest to niebezpieczne?">
         <q-card style="max-width: 600px">
           <q-card-section>
-            <p><strong>Error-Based SQL Injection</strong> wykorzystuje komunikaty o błędach do wyciągania informacji z bazy danych.</p>
+            <p><strong>Error-Based SQL Injection</strong> wykorzystuje komunikaty o błędach do wyciągania informacji z
+              bazy danych.</p>
             <p>Jeśli serwer nie filtruje błędów SQL, napastnik może:</p>
             <ul>
               <li>Poznać strukturę bazy (liczbę kolumn, nazwy tabel)</li>
               <li>Wydobywać wartości z SELECT-ów (poprzez błędy)</li>
               <li>Eksploitować backend przez manipulację zapytaniami</li>
+            </ul>
+          </q-card-section>
+        </q-card>
+      </q-expansion-item>
+      <q-expansion-item expand-separator icon="code" label="Przykład podatnego kodu (backend)">
+        <q-card style="max-width: 700px">
+          <q-card-section>
+            <p>Oto przykład uproszczonego kodu backendowego w Node.js z użyciem SQLite:</p>
+            <pre><code>
+// NIEBEZPIECZNE! Wstrzykiwanie bez walidacji:
+const query = `SELECT * FROM users WHERE username = '${req.body.username}' AND password = '${req.body.password}'`
+
+db.get(query, (err, row) => {
+  if (err) {
+    res.status(500).json({ error: err.message })  // Tu ujawniany jest błąd SQL
+  } else if (row) {
+    res.json({ success: true, user: row })
+  } else {
+    res.status(401).json({ success: false })
+  }
+})
+      </code></pre>
+
+            <p><strong>Dlaczego to jest złe?</strong></p>
+            <ul>
+              <li>Parametry od użytkownika są wstrzykiwane bez walidacji.</li>
+              <li>Komunikaty o błędach są zwracane w odpowiedzi – to umożliwia atakującemu analizę błędów SQL.</li>
+              <li>Brak użycia przygotowanych zapytań (prepared statements).</li>
             </ul>
           </q-card-section>
         </q-card>
@@ -119,7 +137,7 @@ const handleLogin = async () => {
     )
 
     loginSuccess.value = response.status === 200
-  } catch (error: any) {
+  } catch (error) {
     loginSuccess.value = false
     sqlError.value = error?.response?.data?.error || 'Nieznany błąd'
   }
