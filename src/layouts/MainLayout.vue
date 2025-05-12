@@ -23,7 +23,7 @@
             </q-badge>
           </div>
 
-          <div class="q-ml-auto q-mr-xl self-center">
+          <div v-if="userStore.isAdmin" class="q-ml-auto q-mr-xl self-center">
             <router-link to="/security" class="text-white" style="text-decoration: none;">
               Security
             </router-link>

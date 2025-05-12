@@ -35,17 +35,17 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   })
 
   Router.beforeEach(async (to, from, next) => {
-    const user = useUserStore() // np. z localStorage, Vuex, Pinia
+    const userStore = useUserStore() // np. z localStorage, Vuex, Pinia
 
-    if (!user.username) {
-      await useUserStore().fetchUserData()
+    if (!userStore.username) {
+      await userStore.fetchUserData()
     }
     console.log(to.meta.admin)
-    console.log(user.isAdmin)
+    console.log(userStore.isAdmin)
 
-    if (to.meta.admin && user.isAdmin) {
+    if (to.meta.admin && userStore.isAdmin) {
       return next()
-    } else if (to.meta.admin && (!user || !user.isAdmin)) {
+    } else if (to.meta.admin && (!userStore || !userStore.isAdmin)) {
       return next('/')
     }
 
