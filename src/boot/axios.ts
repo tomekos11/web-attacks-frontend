@@ -8,6 +8,17 @@ declare module 'vue' {
   }
 }
 
+
+let csrfToken: null | string = null;
+
+const setCsrfToken = (token: null | string) => {
+  csrfToken = token;
+}
+
+const getCsrfToken = () => {
+  return csrfToken;
+}
+
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
@@ -28,5 +39,21 @@ export default defineBoot(({ app }) => {
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 })
+
+api.interceptors.request.use(async (config) => {
+  // Typy metod, które wymagają CSRF
+  const methodsRequiringCsrf = ['post', 'put', 'patch', 'delete'];
+
+  if (methodsRequiringCsrf.includes(config.method)) {
+    // Jeśli nie mamy tokena w storze, pobierz go z API
+    if (!getCsrfToken()) {
+      const resp = await api.get('/api/csrf-token');
+      setCsrfToken(resp.data.csrfToken);
+    }
+    // Dodaj token do nagłówka
+    config.headers['X-CSRF-Token'] = getCsrfToken();
+  }
+  return config;
+}, (error) => Promise.reject(error));
 
 export { api }

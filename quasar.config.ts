@@ -3,6 +3,15 @@
 
 import { defineConfig } from '#q-app/wrappers'
 
+// const csp = " \
+//   default-src 'self'; \
+//   connect-src 'self' http://localhost:5000 ws://localhost:5000; \
+//   img-src 'self' cdn.quasar.dev; \
+//   script-src 'self' 'unsafe-inline'; \
+//   style-src 'self' 'unsafe-inline'; \
+//   frame-ancestors 'self'; \
+// ";
+
 export default defineConfig((/* ctx */) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
