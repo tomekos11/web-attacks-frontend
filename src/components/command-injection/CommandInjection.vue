@@ -5,17 +5,13 @@
     <q-card bordered flat>
       <q-card-section>
         <p class="text-bold">
-          W tym przykładzie zobaczysz, jak atak Command Injection pozwala na wykonanie nieautoryzowanych komend na serwerze.
+          W tym przykładzie zobaczysz, jak atak Command Injection pozwala na wykonanie nieautoryzowanych komend na
+          serwerze.
         </p>
 
         <q-form @submit.prevent="handlePing">
-          <q-input
-            v-model.trim="hostname"
-            label="Host (payload Command Injection)"
-            outlined
-            class="q-my-md"
-            style="width: 40%; min-width: min(300px, 100%)"
-          />
+          <q-input v-model.trim="hostname" label="Host (payload Command Injection)" outlined class="q-my-md"
+            style="width: 40%; min-width: min(300px, 100%)" />
 
           <q-btn color="primary" type="submit" label="Pinguj" />
         </q-form>
@@ -26,7 +22,7 @@
       <q-card-section>
         <p v-if="pingSuccess" class="text-positive text-bold">
           ✅ Komenda wykonana pomyślnie!
-          <code> {{ data }} </code>
+        <pre>{{ data }}</pre>
         </p>
 
         <p v-else class="text-negative text-bold">
@@ -47,7 +43,7 @@
             <p>Spróbuj w polu host użyć payloadu generującego błąd:</p>
             <ul>
               <li>
-                <code >localhost&&dir</code>
+                <code>localhost&&dir</code>
                 <p>➡️ Zwróci listę plików w katalogu, jeśli serwer pozwala na komendy shellowe.</p>
               </li>
               <li>
@@ -62,8 +58,10 @@
       <q-expansion-item expand-separator icon="warning" label="Dlaczego jest to niebezpieczne?">
         <q-card style="max-width: 600px">
           <q-card-section>
-            <p><strong>Command Injection</strong> pozwala atakującym na wykonanie nieautoryzowanych komend na serwerze, co może prowadzić do uzyskania dostępu do wrażliwych danych.</p>
-            <p>Jeśli aplikacja wykonuje komendy shellowe z nieodpowiednio filtrowanymi danymi wejściowymi, napastnik może:</p>
+            <p><strong>Command Injection</strong> pozwala atakującym na wykonanie nieautoryzowanych komend na serwerze,
+              co może prowadzić do uzyskania dostępu do wrażliwych danych.</p>
+            <p>Jeśli aplikacja wykonuje komendy shellowe z nieodpowiednio filtrowanymi danymi wejściowymi, napastnik
+              może:</p>
             <ul>
               <li>Uzyskać dostęp do plików systemowych</li>
               <li>Wykonać polecenia systemowe, które mogą uszkodzić serwer</li>
