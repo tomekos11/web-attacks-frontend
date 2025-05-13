@@ -34,27 +34,6 @@ export default defineRouter(function ({ store, ssrContext }) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   })
 
-  // Router.beforeEach(async (to, from, next) => {
-  //   const userStore = useUserStore() // np. z localStorage, Vuex, Pinia
-
-  //   console.log('przed routerem')
-
-  //   console.log(userStore.$state)
-
-  //   if (!userStore.username) {
-  //     await userStore.fetchUserData()
-  //   }
-  //   console.log(to.meta.admin)
-  //   console.log(userStore.isAdmin)
-
-  //   if (to.meta.admin && userStore.isAdmin) {
-  //     return next()
-  //   } else if (to.meta.admin && (!userStore || !userStore.isAdmin)) {
-  //     return next('/')
-  //   }
-
-  //   next()
-  // })
   const userStore = useUserStore(store)
 
   Router.beforeEach(async (to, from, next) => {

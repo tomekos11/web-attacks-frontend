@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="items-center justify-evenly full-height full-width q-pa-md"
-    style="display: inline-grid"
-  >
+  <div class="items-center justify-evenly full-height full-width q-pa-md" style="display: inline-grid">
     <h1 style="font-size: 30px; line-height: normal">Witaj na prezentacji Reflected XSS</h1>
 
     <q-card bordered flat>
@@ -14,22 +11,12 @@
 
         <template v-if="name">
           <p>Witaj, <span v-html="name"></span>!</p>
-          <q-btn
-            label="Zmień podane imie"
-            style="width: fit-content"
-            color="primary"
-            @click="resetName"
-          />
+          <q-btn label="Zmień podane imie" style="width: fit-content" color="primary" @click="resetName" />
         </template>
         <div v-else>
           Podaj swoje imię, aby otrzymać powitanie.
-          <q-input
-            v-model="newName"
-            label="Wpisz swoje imie"
-            outlined
-            class="q-my-md"
-            style="width: 20%; min-width: min(200px, 100%)"
-          />
+          <q-input v-model="newName" label="Wpisz swoje imie" outlined class="q-my-md"
+            style="width: 20%; min-width: min(200px, 100%)" />
           <q-btn label="Zatwierdź swoje imie" @click="confirmName" />
         </div>
       </q-card-section>
@@ -48,11 +35,7 @@
         </q-card>
       </q-expansion-item>
 
-      <q-expansion-item
-        expand-separator
-        icon="question_mark"
-        label="Dlaczego jest to ultra niebezpieczne"
-      >
+      <q-expansion-item expand-separator icon="question_mark" label="Dlaczego jest to ultra niebezpieczne">
         <q-card style="max-width: 600px">
           <q-card-section>
             <ol>
@@ -143,12 +126,12 @@ const name = ref(route.query.name)
 
 const newName = ref('')
 
-const domain = window.location.origin
+const domain = process.env.CLIENT ? window.location.origin : ''
 
-const dangerousLink = domain + '/reflected-xss?name=<img%20src=a%20onerror=alert(1)>'
+const dangerousLink = process.env.CLIENT ? domain + '/reflected-xss?name=<img%20src=a%20onerror=alert(1)>' : ''
 
-const confirmName = () => {
-  router.replace({
+const confirmName = async () => {
+  await router.replace({
     query: {
       name: newName.value,
     },
@@ -157,8 +140,8 @@ const confirmName = () => {
   name.value = newName.value
 }
 
-const resetName = () => {
-  router.replace({
+const resetName = async () => {
+  await router.replace({
     query: {
       name: undefined,
     },

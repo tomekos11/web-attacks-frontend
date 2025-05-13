@@ -2,24 +2,10 @@ import { type Request, type Response } from 'express'
 import { defineSsrMiddleware } from '#q-app/wrappers'
 import express from 'express'
 
-let clickacjingSecurityEnabled = true
-let xssSecurityEnabled = true
+export let clickacjingSecurityEnabled = true
+export let xssSecurityEnabled = true
 
-export default defineSsrMiddleware(({ app, resolve, render, serve }) => {
-  app.use((req: Request, res: Response, next) => {
-    res.setHeader(
-      'Content-Security-Policy',
-      "default-src 'self'; " +
-        "connect-src 'self' http://localhost:5000 ws://localhost:5000 ws://localhost:24678; " +
-        "img-src 'self' cdn.quasar.dev; " +
-        `script-src 'self' ${xssSecurityEnabled ? '' : 'unsafe-inline'}; ` +
-        "style-src 'self' 'unsafe-inline'; " +
-        "font-src 'self' data: ;" +
-        `frame-ancestors ${clickacjingSecurityEnabled ? "'self'" : '*'}`,
-    )
-    next()
-  })
-
+export default defineSsrMiddleware(({ app }) => {
   app.use(express.json())
 
   app.post('/api/set-clickjacking', async (req: Request, res: Response) => {

@@ -13,7 +13,7 @@ import { useDebounceFn } from '@vueuse/core';
 import { Notify } from 'quasar';
 import { api } from 'src/boot/axios';
 import axios from 'axios';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 interface Options {
   id: number;
@@ -39,7 +39,7 @@ onMounted(async () => {
   }
 })
 
-const saveSecurityOptions = useDebounceFn(async (newOptions: Options[], oldOptions: Options[]) => {
+const saveSecurityOptions = useDebounceFn(async (oldOptions: Options[]) => {
   try {
     loading.value = true
 
@@ -55,7 +55,7 @@ const saveSecurityOptions = useDebounceFn(async (newOptions: Options[], oldOptio
     ]
 
     for (const { name, endpoint } of securitySettings) {
-      const newSetting = newOptions.find(el => el.name === name)
+      const newSetting = options.value.find(el => el.name === name)
       const oldSetting = oldOptions.find(el => el.name === name)
 
       if (newSetting?.isActive !== oldSetting?.isActive) {
@@ -85,12 +85,14 @@ const saveSecurityOptions = useDebounceFn(async (newOptions: Options[], oldOptio
   }
 }, 700)
 
-watch(options, async (newVal, oldVal) => {
+const optionToWatch = computed(() => JSON.parse(JSON.stringify(options.value)));
+
+watch(optionToWatch, async (newVal, oldVal) => {
   if (!isFetched.value) return;
 
-  await saveSecurityOptions(newVal, oldVal);
+  await saveSecurityOptions(oldVal);
 
-}, { deep: true })
+})
 
 
 
