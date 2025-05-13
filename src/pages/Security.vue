@@ -1,8 +1,10 @@
 <template>
-  <h3>Kontroluj zabezpieczenia backendu aplikacji</h3>
+  <div>
+    <h3>Kontroluj zabezpieczenia backendu aplikacji</h3>
 
-  <div v-for="option in options" :key="option.id">
-    <q-toggle v-model="option.isActive" :true-value="1" :false-value="0" :label="option.name" :disable="loading" />
+    <div v-for="option in options" :key="option.id">
+      <q-toggle v-model="option.isActive" :true-value="1" :false-value="0" :label="option.name" :disable="loading" />
+    </div>
   </div>
 </template>
 
