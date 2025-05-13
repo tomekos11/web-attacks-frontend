@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="q-pa-md" v-if="hydrated">
     <h1 style="font-size: 30px; line-height: normal" class="text-center">
       Wybierz rodzaj ataku, który chcesz przetestować
     </h1>
@@ -14,6 +14,14 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+const hydrated = ref(false)
+
+onMounted(() => {
+  hydrated.value = true
+})
+
+
 const attacks = [
   { name: 'Stored XSS', description: 'XD', link: 'stored-xss' },
   { name: 'Reflected XSS', description: 'XD', link: 'reflected-xss' },
@@ -80,6 +88,6 @@ const attacks = [
 
 .tile-card:hover {
   transform: scale(1.05);
-  box-shadow: 5px 5px 15px rgba(0, 0, 0,0.3);
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
 }
 </style>
