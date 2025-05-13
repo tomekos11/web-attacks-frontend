@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="hHh lpR fFf" v-if="hydrated">
     <q-header elevated>
       <q-toolbar>
         <q-toolbar-title class="flex justify-between">
@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { useUserStore } from 'src/stores/user'
-import { defineAsyncComponent, ref } from 'vue'
+import { defineAsyncComponent, ref, onMounted } from 'vue'
 
 const LoginModal = defineAsyncComponent(() => import('components/LoginModal.vue'))
 const Tiles = defineAsyncComponent(() => import('components/Tiles.vue'))
@@ -66,4 +66,11 @@ const Tiles = defineAsyncComponent(() => import('components/Tiles.vue'))
 const showLoginModal = ref(false)
 
 const userStore = useUserStore()
+
+const hydrated = ref(false)
+
+onMounted(() => {
+  hydrated.value = true
+})
+
 </script>
