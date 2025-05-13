@@ -3,26 +3,15 @@
     <div style="height: 50px; display: flex; align-items: center; justify-content: end">
       <q-checkbox v-model="onlyHtml" label="Pokaż jedynie czysty HTML" />
 
-      <q-toggle
-        v-model="isSafe"
-        label="Bezpieczny Tryb"
-        color="green"
-        :false-value="false"
-        :true-value="true"
-        :disable="false"
-        class="q-mr-sm"
-      />
+      <q-toggle v-model="isSafe" label="Bezpieczny Tryb" color="green" :false-value="false" :true-value="true"
+        :disable="false" class="q-mr-sm" />
     </div>
 
     <q-scroll-area style="height: min(700px, 80vh); width: 100%">
       <q-list bordered>
         <q-item-label header>Posty:</q-item-label>
-        <q-item
-          v-for="(post, index) in posts"
-          :key="post.id"
-          :class="index % 2 === 0 ? 'bg-white' : 'bg-grey-3'"
-          style="overflow-wrap: anywhere"
-        >
+        <q-item v-for="(post, index) in posts" :key="post.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-grey-3'"
+          style="overflow-wrap: anywhere">
           <q-item-section>
             <div class="flex" style="gap: 20px">
               <div class="flex column q-py-sm">
@@ -48,22 +37,14 @@
                         timeZoneName: 'short',
                       })
                     }}
-                    <q-btn
-                      v-if="userStore.isAdmin"
-                      class="self-end q-mt-sm"
-                      color="red-7"
-                      icon="delete"
-                      size="sm"
-                      label="Usuń"
-                      @click="removePost(post.id)"
-                    />
+                    <q-btn v-if="userStore.isAdmin" class="self-end q-mt-sm" color="red-7" icon="delete" size="sm"
+                      label="Usuń" @click="removePost(post.id)" />
                   </div>
                 </div>
 
                 <pre v-if="onlyHtml">
                       {{ isSafe ? DOMPurify.sanitize(post.content) : post.content }}
-                    </pre
-                >
+                    </pre>
 
                 <div v-else v-html="isSafe ? DOMPurify.sanitize(post.content) : post.content" />
               </div>
@@ -82,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, onMounted, ref } from 'vue'
+import { defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
 import DOMPurify from 'dompurify'
 import { useStorage } from '@vueuse/core'
 import { api } from 'src/boot/axios'
@@ -143,7 +124,9 @@ onMounted(async () => {
   await getPosts()
 })
 
-const socket = new WebSocket('ws://localhost:5000')
+const socket = ref<WebSocket | null>(null)
+
+// const socket = new WebSocket('ws://localhost:5000')
 
 interface WebSocketMessage {
   message: string
@@ -151,21 +134,54 @@ interface WebSocketMessage {
   type: 'post_added'
 }
 
-// Po nawiązaniu połączenia, nasłuchuj wiadomości
-socket.onmessage = (event) => {
-  const data = JSON.parse(event.data) as WebSocketMessage
+// // Po nawiązaniu połączenia, nasłuchuj wiadomości
+// socket.onmessage = (event) => {
+//   const data = JSON.parse(event.data) as WebSocketMessage
 
-  if (data.type === 'post_added') {
-    posts.value.unshift(data.post)
+//   if (data.type === 'post_added') {
+//     posts.value.unshift(data.post)
+//   }
+// }
+
+// // Możesz również obsługiwać inne zdarzenia, np. błąd lub zamknięcie połączenia:
+// socket.onerror = (error) => {
+//   console.log('Błąd WebSocket:', error)
+// }
+
+// socket.onclose = () => {
+//   console.log('Połączenie WebSocket zostało zamknięte')
+// }
+
+
+onMounted(async () => {
+  // Uruchamiaj tylko po stronie klienta
+  if (process.env.CLIENT) {
+    await getPosts()
+
+    // Inicjalizacja WebSocket
+    socket.value = new WebSocket('ws://localhost:5000')
+
+    socket.value.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data) as WebSocketMessage
+      if (data.type === 'post_added') {
+        posts.value.unshift(data.post)
+      }
+    })
+
+    socket.value.addEventListener('error', (error) => {
+      console.log('Błąd WebSocket:', error)
+    })
+
+    socket.value.addEventListener('close', () => {
+      console.log('Połączenie WebSocket zostało zamknięte')
+    })
   }
-}
+})
 
-// Możesz również obsługiwać inne zdarzenia, np. błąd lub zamknięcie połączenia:
-socket.onerror = (error) => {
-  console.log('Błąd WebSocket:', error)
-}
-
-socket.onclose = () => {
-  console.log('Połączenie WebSocket zostało zamknięte')
-}
+onBeforeUnmount(() => {
+  // Zamknij połączenie przy usuwaniu komponentu
+  if (process.env.CLIENT && socket.value) {
+    socket.value.close()
+  }
+})
 </script>

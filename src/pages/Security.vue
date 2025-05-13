@@ -12,6 +12,7 @@
 import { useDebounceFn } from '@vueuse/core';
 import { Notify } from 'quasar';
 import { api } from 'src/boot/axios';
+import axios from 'axios';
 import { nextTick, onMounted, ref, watch } from 'vue';
 
 interface Options {
@@ -38,34 +39,59 @@ onMounted(async () => {
   }
 })
 
-const saveSecurityOptions = useDebounceFn(async () => {
-
+const saveSecurityOptions = useDebounceFn(async (newOptions: Options[], oldOptions: Options[]) => {
   try {
-    loading.value = true;
+    loading.value = true
+
+    // 1. Wysłanie głównego żądania
     const { data } = await api.post<Options[]>('/security', {
       securityOptions: options.value
-    });
+    })
 
-    if (JSON.stringify(options.value) !== JSON.stringify(data)) {
-      options.value = data;
+    // 2. Aktualizacja poszczególnych ustawień
+    const securitySettings = [
+      { name: 'clickjacking', endpoint: '/api/set-clickjacking' },
+      { name: 'xss', endpoint: '/api/set-xss' }
+    ]
+
+    for (const { name, endpoint } of securitySettings) {
+      const newSetting = newOptions.find(el => el.name === name)
+      const oldSetting = oldOptions.find(el => el.name === name)
+
+      if (newSetting?.isActive !== oldSetting?.isActive) {
+        await axios.post(endpoint, {
+          isActive: newSetting?.isActive
+        })
+      }
     }
 
-  } catch (err) {
-    console.error(err)
+    // 3. Aktualizacja stanu tylko jeśli są zmiany
+    if (JSON.stringify(options.value) !== JSON.stringify(data)) {
+      options.value = data
+    }
+
+    Notify.create({
+      message: 'Zaktualizowano ustawienia bezpieczeństwa',
+      type: 'positive'
+    })
+  } catch (error) {
+    console.error('Błąd aktualizacji:', error)
+    Notify.create({
+      message: 'Błąd podczas zapisywania ustawień',
+      type: 'negative'
+    })
   } finally {
     loading.value = false
   }
-
-  Notify.create({
-    message: 'Zaktualizowano ustawienia bezpieczeństwa'
-  })
 }, 700)
 
-watch(options, async (newVal) => {
+watch(options, async (newVal, oldVal) => {
   if (!isFetched.value) return;
 
-  saveSecurityOptions();
+  await saveSecurityOptions(newVal, oldVal);
 
 }, { deep: true })
+
+
 
 </script>
