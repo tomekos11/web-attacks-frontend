@@ -1,8 +1,12 @@
 import { defineBoot } from '@quasar/app-vite/wrappers'
-import { clickacjingSecurityEnabled, xssSecurityEnabled } from 'app/src-ssr/middlewares/csp'
 import crypto from 'crypto'
+import { useSecurityOptions } from 'src/composables/useSecurityOptions'
 
-export default defineBoot(({ ssrContext }) => {
+export default defineBoot(async ({ ssrContext }) => {
+  const { init, clickacjingSecurityEnabled, xssSecurityEnabled } = useSecurityOptions()
+
+  await init()
+
   const nonce = crypto.randomBytes(16).toString('base64')
 
   if (ssrContext) {

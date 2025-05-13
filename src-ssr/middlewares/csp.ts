@@ -1,17 +1,17 @@
 import { type Request, type Response } from 'express'
 import { defineSsrMiddleware } from '#q-app/wrappers'
 import express from 'express'
-
-export let clickacjingSecurityEnabled = true
-export let xssSecurityEnabled = true
+import { useSecurityOptions } from 'src/composables/useSecurityOptions'
 
 export default defineSsrMiddleware(({ app }) => {
+  const { setClickacjingSecurityEnabled, setXssSecurityEnabled } = useSecurityOptions()
+
   app.use(express.json())
 
   app.post('/api/set-clickjacking', async (req: Request, res: Response) => {
     const { isActive } = req.body
 
-    clickacjingSecurityEnabled = isActive
+    setClickacjingSecurityEnabled(isActive)
 
     res.status(200).json({ message: 'clickjacking security updated', isActive })
   })
@@ -19,7 +19,7 @@ export default defineSsrMiddleware(({ app }) => {
   app.post('/api/set-xss', async (req: Request, res: Response) => {
     const { isActive } = req.body
 
-    xssSecurityEnabled = isActive
+    setXssSecurityEnabled(isActive)
 
     res.status(200).json({ message: 'XSS security updated', isActive })
   })
