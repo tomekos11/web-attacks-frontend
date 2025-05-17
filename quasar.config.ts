@@ -2,6 +2,7 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
 import { defineConfig } from '#q-app/wrappers'
+import { env } from 'process'
 
 // const csp = " \
 //   default-src 'self'; \
@@ -13,6 +14,8 @@ import { defineConfig } from '#q-app/wrappers'
 // ";
 
 export default defineConfig((/* ctx */) => {
+  console.log(process.env.MODE)
+
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -61,7 +64,7 @@ export default defineConfig((/* ctx */) => {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {},
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,

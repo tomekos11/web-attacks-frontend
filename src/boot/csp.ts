@@ -16,9 +16,9 @@ export default defineBoot(async ({ ssrContext }) => {
   ssrContext?.res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; " +
-      "connect-src 'self' http://localhost:5000 ws://localhost:5000 ws://localhost:24678; " +
+      `connect-src 'self' http://localhost:5000 ws://localhost:5000 ws://localhost:24678 ${xssSecurityEnabled ? '' : '*'};` +
       "img-src 'self' cdn.quasar.dev; " +
-      `script-src 'self' 'nonce-${ssrContext.nonce}' ${xssSecurityEnabled ? '' : 'unsafe-inline'}; ` +
+      `script-src 'self' ${xssSecurityEnabled ? "'nonce-${ssrContext.nonce}'" : "'unsafe-inline'"}; ` +
       `style-src 'self' 'unsafe-inline'; ` +
       "font-src 'self' data: ;" +
       `frame-ancestors ${clickacjingSecurityEnabled ? "'self'" : '*'}`,

