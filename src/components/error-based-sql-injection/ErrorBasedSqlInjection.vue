@@ -5,29 +5,33 @@
     <q-card bordered flat>
       <q-card-section>
         <p class="text-bold">
-          W tym przykładzie zobaczysz, jak błędy SQL mogą ujawnić wewnętrzne szczegóły bazy danych.
+          W tym przykładzie zobaczysz, jak błędy SQL mogą ujawnić wewnętrzne szczegóły bazy danych podczas pobierania
+          posta po ID.
         </p>
 
-        <q-form @submit.prevent="handleLogin">
-          <q-input v-model.trim="username" label="Login (payload SQL)" outlined class="q-my-md"
-            style="width: 40%; min-width: min(300px, 100%)" />
+        <q-form @submit.prevent="fetchPost">
+          <q-input v-model.trim="postId" label="ID posta (payload SQL)" outlined class="q-my-md"
+            style="width: 100%; min-width: min(300px, 100%)" />
 
-          <q-input v-model.trim="password" type="password" label="Hasło" outlined class="q-my-md"
-            style="width: 40%; min-width: min(300px, 100%)" />
-
-          <q-btn color="primary" type="submit" label="Zaloguj się" />
+          <q-btn color="primary" type="submit" label="Pobierz posta" />
         </q-form>
       </q-card-section>
     </q-card>
 
-    <q-card bordered flat class="q-mt-md" v-if="loginAttempted">
+    <q-card bordered flat class="q-mt-md" v-if="requestMade">
       <q-card-section>
-        <p v-if="loginSuccess" class="text-positive text-bold">
-          ✅ Zalogowano pomyślnie!
+        <p v-if="post" class="text-positive text-bold">
+          ✅ Post został znaleziony!
         </p>
         <p v-else class="text-negative text-bold">
-          ❌ Błędny login lub hasło.
+          ❌ Post nie został znaleziony.
         </p>
+      </q-card-section>
+
+      <q-card-section v-if="post">
+        <p><strong>ID:</strong> {{ post.id }}</p>
+        <p><strong>Tytuł:</strong> {{ post.title }}</p>
+        <p><strong>Treść:</strong> {{ post.content }}</p>
       </q-card-section>
 
       <q-card-section v-if="sqlError">
@@ -42,22 +46,57 @@
           <q-card-section>
             <p>Spróbuj w polu login użyć payloadu generującego błąd:</p>
             <ul>
-              <li>
-                <pre><code>' AND not_a_function() --</code></pre>
-                <p>➡️ Błąd: <code>no such function: not_a_function</code></p>
-              </li>
-              <li>
-                <pre><code>' AND (SELECT * FROM (SELECT 1, 2) AS sub) --</code></pre>
-                <p>➡️ Błąd: <code>sub-select returns 2 columns - expected 1</code></p>
-              </li>
-              <li>
-                <pre><code>' AND (SELECT *) --</code></pre>
-                <p>➡️ Błąd: <code>no tables specified</code></p>
-              </li>
-              <li>
-                <pre><code>' AND (SELECT 1) = (SELECT 2) FROM (SELECT 1) --</code></pre>
-                <p>➡️ Błąd: <code>near "FROM": syntax error</code></p>
-              </li>
+              <ul>
+
+                <li>
+                  <pre><code>1 --</code></pre>
+                  <p>➡️ <code>Podstawowy test</code> – sprawdza, czy możemy uciąć resztę zapytania SQL. Jeśli zadziała,
+                    aplikacja prawdopodobnie jest podatna na SQL Injection.</p>
+                </li>
+
+                <li>
+                  <pre><code>1 AND 1=1 --</code></pre>
+                  <p>➡️ <code>Zawsze prawda</code> – jeśli strona działa normalnie, to znaczy, że nasz kod jest
+                    wykonywany. Służy do potwierdzenia działania iniekcji.</p>
+                </li>
+
+                <li>
+                  <pre><code>1 AND 1=0 --</code></pre>
+                  <p>➡️ <code>Zawsze fałsz</code> – jeśli strona zwróci pusty wynik lub błąd, to wiemy, że możemy
+                    sterować logiką SQL przez nasz payload.</p>
+                </li>
+
+                <li>
+                  <pre><code>1 ORDER BY 1 --</code></pre>
+                  <p>➡️ <code>Test liczby kolumn</code> – sprawdza, czy zapytanie zawiera co najmniej jedną kolumnę.
+                    Zmieniamy liczbę (1, 2, 3...) aż do błędu, by wykryć limit.</p>
+                </li>
+
+                <li>
+                  <pre><code>1 UNION SELECT 1,2,3 --</code></pre>
+                  <p>➡️ <code>Test UNION</code> – próbujemy połączyć nasze dane z wynikami zapytania oryginalnego.
+                    Liczba wartości musi się zgadzać z liczbą kolumn.</p>
+                </li>
+
+                <li>
+                  <pre><code>1 AND SUBSTR((SELECT sqlite_version()), 1, 1) = '3' --</code></pre>
+                  <p>➡️ <code>Warunkowa prawda</code> – jeśli trafimy w warunek (np. wersja SQLite zaczyna się od '3'),
+                    zapytanie działa. Użyteczne do wycieku danych znak po znaku.</p>
+                </li>
+
+                <li>
+                  <pre><code>1 AND typeof(id) = 'text' --</code></pre>
+                  <p>➡️ <code>Sprawdzenie typu kolumny</code> – jeśli typ nie pasuje, możemy zmienić zachowanie
+                    zapytania. Pomocne przy budowaniu warunków błędu.</p>
+                </li>
+
+                <li>
+                  <pre><code>1 AND not_a_function() --</code></pre>
+                  <p>➡️ <code>Błąd: no such function</code> – używamy nieistniejącej funkcji, by wymusić błąd serwera.
+                    To technika do wykrywania Blind SQLi przez obserwację błędów.</p>
+                </li>
+
+              </ul>
             </ul>
           </q-card-section>
         </q-card>
@@ -113,33 +152,27 @@ db.get(query, (err, row) => {
 import { ref } from 'vue'
 import { api } from 'src/boot/axios'
 
-const username = ref<string>('')
-const password = ref<string>('')
-
-const loginAttempted = ref(false)
-const loginSuccess = ref(false)
+const postId = ref<string>('')
+const post = ref<any | null>(null)
 const sqlError = ref<string | null>(null)
+const requestMade = ref(false)
 
-const handleLogin = async () => {
-  loginAttempted.value = true
+const fetchPost = async () => {
+  post.value = null
   sqlError.value = null
+  requestMade.value = false
 
   try {
-    const response = await api.post(
-      '/login-unsafe',
-      {
-        username: username.value,
-        password: password.value,
-      },
-      {
-        withCredentials: true,
-      }
-    )
+    const response = await api.get('/post', {
+      params: { id: postId.value },
+    });
 
-    loginSuccess.value = response.status === 200
+    post.value = response.data
   } catch (error) {
-    loginSuccess.value = false
+    post.value = null
     sqlError.value = error?.response?.data?.error || 'Nieznany błąd'
+  } finally {
+    requestMade.value = true
   }
 }
 </script>
