@@ -9,13 +9,8 @@
         </p>
 
         <q-form @submit.prevent="handleReadFile">
-          <q-input
-            v-model.trim="filename"
-            label="Nazwa pliku (payload)"
-            outlined
-            class="q-my-md"
-            style="width: 40%; min-width: min(300px, 100%)"
-          />
+          <q-input v-model.trim="filename" label="Nazwa pliku (payload)" outlined class="q-my-md"
+            style="width: 40%; min-width: min(300px, 100%)" />
 
           <q-btn color="primary" type="submit" label="Pobierz plik" />
         </q-form>
@@ -38,6 +33,24 @@
       </q-card-section>
     </q-card>
 
+    <!-- 🔁 ZAMIANA / NADPISANIE PLIKU -->
+    <q-card bordered flat class="q-mt-xl">
+      <q-card-section>
+        <p class="text-bold">🔁 Zamiana pliku (Write + Path Traversal)</p>
+        <q-form @submit.prevent="handleWriteFile">
+          <q-input v-model="writeFilename" label="Nazwa pliku (np. ../.env)" outlined class="q-my-md"
+            style="width: 40%; min-width: min(300px, 100%)" />
+          <q-input v-model="writeContent" type="textarea" label="Zawartość pliku" autogrow outlined class="q-mb-md"
+            style="max-width: 600px" />
+          <q-btn color="negative" type="submit" label="Zapisz plik" />
+        </q-form>
+        <p v-if="writeResult" class="q-mt-sm">
+          {{ writeResult }}
+        </p>
+      </q-card-section>
+    </q-card>
+
+
     <q-list bordered class="rounded-borders q-mt-lg">
       <q-expansion-item expand-separator icon="question_mark" label="Pokaż podpowiedź">
         <q-card style="max-width: 600px">
@@ -49,7 +62,9 @@
               <li><code>../server.ts</code></li>
               <li><code>../../.env</code></li>
             </ul>
-            <p>➡️ Jeśli aplikacja nie filtruje ścieżek, możliwe jest odczytanie plików spoza katalogu <code>files/</code>.</p>
+            <p>➡️ Jeśli aplikacja nie filtruje ścieżek, możliwe jest odczytanie plików spoza katalogu
+              <code>files/</code>.
+            </p>
           </q-card-section>
         </q-card>
       </q-expansion-item>
@@ -57,7 +72,8 @@
       <q-expansion-item expand-separator icon="warning" label="Dlaczego jest to niebezpieczne?">
         <q-card style="max-width: 600px">
           <q-card-section>
-            <p><strong>Directory Traversal</strong> pozwala atakującym na dostęp do plików systemowych lub poufnych danych.</p>
+            <p><strong>Directory Traversal</strong> pozwala atakującym na dostęp do plików systemowych lub poufnych
+              danych.</p>
             <p>Możliwe konsekwencje:</p>
             <ul>
               <li>Odczyt konfiguracji serwera lub aplikacji</li>
@@ -96,4 +112,22 @@ const handleReadFile = async () => {
     fileContent.value = error?.response?.data || 'Nieznany błąd'
   }
 }
+
+const writeFilename = ref('')
+const writeContent = ref('')
+const writeResult = ref('')
+
+const handleWriteFile = async () => {
+  try {
+    const res = await api.post('/write-file', {
+      filename: writeFilename.value,
+      content: writeContent.value,
+    }, { withCredentials: true })
+
+    writeResult.value = res.data
+  } catch (err: any) {
+    writeResult.value = err?.response?.data || 'Błąd przy zapisie.'
+  }
+}
+
 </script>

