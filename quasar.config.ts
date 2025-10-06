@@ -82,7 +82,7 @@ export default defineConfig((/* ctx */) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
     devServer: {
       // https: true,
-      allowedHosts: ['frontend-1.wa.local', 'localhost'],
+      allowedHosts: true,
       open: true, // opens browser window automatically
     },
 
