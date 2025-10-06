@@ -24,7 +24,8 @@ const getCsrfToken = () => {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: 'http://localhost:5000', withCredentials: true })
+
+const api = axios.create({ baseURL: 'http://backend.wa.local', withCredentials: true })
 
 export default defineBoot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

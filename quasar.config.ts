@@ -2,16 +2,6 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
 import { defineConfig } from '#q-app/wrappers'
-import { env } from 'process'
-
-// const csp = " \
-//   default-src 'self'; \
-//   connect-src 'self' http://localhost:5000 ws://localhost:5000; \
-//   img-src 'self' cdn.quasar.dev; \
-//   script-src 'self' 'unsafe-inline'; \
-//   style-src 'self' 'unsafe-inline'; \
-//   frame-ancestors 'self'; \
-// ";
 
 export default defineConfig((/* ctx */) => {
   console.log(process.env.MODE)
@@ -92,6 +82,7 @@ export default defineConfig((/* ctx */) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
     devServer: {
       // https: true,
+      allowedHosts: ['frontend-1.wa.local', 'localhost'],
       open: true, // opens browser window automatically
     },
 
