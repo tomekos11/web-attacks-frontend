@@ -1,0 +1,5 @@
+{
+  "appId": "pl.web_attacks",
+  "appName": "Xss demonstration",
+  "webDir": "www"
+}
