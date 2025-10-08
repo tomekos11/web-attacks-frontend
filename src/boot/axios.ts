@@ -25,7 +25,7 @@ const getCsrfToken = () => {
 // "export default () => {}" function below (which runs individually
 // for each client)
 
-const api = axios.create({ baseURL: 'http://backend.wa.local', withCredentials: true })
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL, withCredentials: true })
 
 export default defineBoot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
@@ -58,5 +58,6 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error),
 )
+
 
 export { api }

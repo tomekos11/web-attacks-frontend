@@ -13,7 +13,10 @@ export default defineConfig((/* ctx */) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['axios', { path: 'csp', client: false }],
+    boot: [
+      'axios',
+      { path: 'csp', client: false }
+    ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss'],
@@ -82,6 +85,10 @@ export default defineConfig((/* ctx */) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
     devServer: {
       // https: true,
+      https: {
+        key: './certs/server.key',
+        cert: './certs/server.cert',
+      },
       allowedHosts: true,
       open: true, // opens browser window automatically
     },

@@ -63,125 +63,104 @@
 </template>
 
 <script setup lang="ts">
-  import { defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
-  import DOMPurify from 'dompurify'
-  import { useStorage } from '@vueuse/core'
-  import { api } from 'src/boot/axios'
-  import { Notify } from 'quasar'
-  import { useUserStore } from 'src/stores/user'
+import { defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
+import DOMPurify from 'dompurify'
+import { useStorage } from '@vueuse/core'
+import { api } from 'src/boot/axios'
+import { Notify } from 'quasar'
+import { useUserStore } from 'src/stores/user'
 
-  const AddPostModal = defineAsyncComponent(() => import('components/AddPostModal.vue'))
+const AddPostModal = defineAsyncComponent(() => import('components/AddPostModal.vue'))
 
-  interface Post {
-    id: number
-    title: string
-    content: string
-    userName: string
-    userNumber: string
-    createdAt: string
+interface Post {
+  id: number
+  title: string
+  content: string
+  userName: string
+  userNumber: string
+  createdAt: string
+}
+
+const onlyHtml = ref(false)
+const showAddPostModal = ref(false)
+
+const isSafe = useStorage('is-safe', true)
+
+const posts = ref<Post[]>([])
+const userStore = useUserStore()
+
+const getPosts = async () => {
+  try {
+    const response = await api.get('/posts', {
+      withCredentials: true,
+    })
+    posts.value = response.data
+  } catch (error) {
+    console.error('Błąd podczas pobierania postów:', error)
   }
+}
 
-  const onlyHtml = ref(false)
-  const showAddPostModal = ref(false)
+const removePost = async (id: number) => {
+  try {
+    await api.delete(`/posts/${id}`, {
+      withCredentials: true,
+    })
+    const index = posts.value.findIndex((el) => el.id === id)
 
-  const isSafe = useStorage('is-safe', true)
-
-  const posts = ref<Post[]>([])
-  const userStore = useUserStore()
-
-  const getPosts = async () => {
-    try {
-      const response = await api.get('/posts', {
-        withCredentials: true,
-      })
-      posts.value = response.data
-    } catch (error) {
-      console.error('Błąd podczas pobierania postów:', error)
+    if (index !== -1) {
+      posts.value.splice(index, 1)
     }
+
+    Notify.create({
+      message: 'Poprawnie usunięto post',
+      type: 'positive',
+    })
+  } catch (e) {
+    console.log('problem z usuwaniem postu')
   }
+}
 
-  const removePost = async (id: number) => {
-    try {
-      await api.delete(`/posts/${id}`, {
-        withCredentials: true,
-      })
-      const index = posts.value.findIndex((el) => el.id === id)
+onMounted(async () => {
+  await getPosts()
+})
 
-      if (index !== -1) {
-        posts.value.splice(index, 1)
-      }
+const socket = ref<WebSocket | null>(null)
 
-      Notify.create({
-        message: 'Poprawnie usunięto post',
-        type: 'positive',
-      })
-    } catch (e) {
-      console.log('problem z usuwaniem postu')
-    }
-  }
+interface WebSocketMessage {
+  message: string
+  post: Post
+  type: 'post_added'
+}
 
-  onMounted(async () => {
+onMounted(async () => {
+  // Uruchamiaj tylko po stronie klienta
+  if (process.env.CLIENT) {
     await getPosts()
-  })
 
-  const socket = ref<WebSocket | null>(null)
+    // Inicjalizacja WebSocket
+    socket.value = new WebSocket(import.meta.env.VITE_WS_URL)
 
-  // const socket = new WebSocket('ws://localhost:5000')
+    socket.value.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data) as WebSocketMessage
+      if (data.type === 'post_added') {
+        posts.value.unshift(data.post)
+      }
+    })
 
-  interface WebSocketMessage {
-    message: string
-    post: Post
-    type: 'post_added'
+    socket.value.addEventListener('error', (error) => {
+      console.log('Błąd WebSocket:', error)
+    })
+
+    socket.value.addEventListener('close', () => {
+      console.log('Połączenie WebSocket zostało zamknięte')
+    })
   }
+})
 
-  // // Po nawiązaniu połączenia, nasłuchuj wiadomości
-  // socket.onmessage = (event) => {
-  //   const data = JSON.parse(event.data) as WebSocketMessage
-
-  //   if (data.type === 'post_added') {
-  //     posts.value.unshift(data.post)
-  //   }
-  // }
-
-  // // Możesz również obsługiwać inne zdarzenia, np. błąd lub zamknięcie połączenia:
-  // socket.onerror = (error) => {
-  //   console.log('Błąd WebSocket:', error)
-  // }
-
-  // socket.onclose = () => {
-  //   console.log('Połączenie WebSocket zostało zamknięte')
-  // }
-
-
-  onMounted(async () => {
-    // Uruchamiaj tylko po stronie klienta
-    if (process.env.CLIENT) {
-      await getPosts()
-
-      // Inicjalizacja WebSocket
-      socket.value = new WebSocket('ws://backend.wa.local')
-
-      socket.value.addEventListener('message', (event) => {
-        const data = JSON.parse(event.data) as WebSocketMessage
-        if (data.type === 'post_added') {
-          posts.value.unshift(data.post)
-        }
-      })
-
-      socket.value.addEventListener('error', (error) => {
-        console.log('Błąd WebSocket:', error)
-      })
-
-      socket.value.addEventListener('close', () => {
-        console.log('Połączenie WebSocket zostało zamknięte')
-      })
-    }
-  })
-
-  onBeforeUnmount(() => {
-    // Zamknij połączenie przy usuwaniu komponentu
-    if (process.env.CLIENT && socket.value) {
-      socket.value.close()
-    }
-  })
+onBeforeUnmount(() => {
+  // Zamknij połączenie przy usuwaniu komponentu
+  if (process.env.CLIENT && socket.value) {
+    socket.value.close()
+  }
+})
 </script>

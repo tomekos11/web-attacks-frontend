@@ -3,7 +3,7 @@ import crypto from 'crypto'
 import { useSecurityOptions } from 'src/composables/useSecurityOptions'
 
 export default defineBoot(async ({ ssrContext }) => {
-  const { init, clickacjingSecurityEnabled, xssSecurityEnabled } = useSecurityOptions()
+  const { init, clickacjingSecurityEnabled, xssSecurityEnabled, httpsEnabled } = useSecurityOptions()
 
   await init()
 
@@ -16,7 +16,7 @@ export default defineBoot(async ({ ssrContext }) => {
   ssrContext?.res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; " +
-      `connect-src 'self' http://localhost:5000 ws://localhost:5000 http://backend.wa.local ws://backend.wa.local ws://localhost:24678 ${xssSecurityEnabled ? '' : '*'};` +
+      `connect-src 'self' ${import.meta.env.VITE_API_URL} ${import.meta.env.VITE_WS_URL} ws://localhost:24678 ${xssSecurityEnabled ? '' : '*'};` +
       "img-src 'self' cdn.quasar.dev; " +
       `script-src 'self' ${xssSecurityEnabled ? "'nonce-${ssrContext.nonce}'" : "'unsafe-inline'"}; ` +
       `style-src 'self' 'unsafe-inline'; ` +

@@ -4,8 +4,9 @@ interface Options {
   isActive: 0 | 1
 }
 
-let clickacjingSecurityEnabled = false
-let xssSecurityEnabled = false
+let clickacjingSecurityEnabled = false;
+let xssSecurityEnabled = false;
+let httpsEnabled = true;
 
 export const useSecurityOptions = () => {
   const init = async () => {
@@ -32,11 +33,17 @@ export const useSecurityOptions = () => {
     xssSecurityEnabled = newVal
   }
 
+  const setHttpsEnabled = (newVal: boolean) => {
+    httpsEnabled = newVal
+  }
+
   return {
     clickacjingSecurityEnabled,
     xssSecurityEnabled,
+    httpsEnabled,
     setClickacjingSecurityEnabled,
     setXssSecurityEnabled,
+    setHttpsEnabled,
     init,
   }
 }

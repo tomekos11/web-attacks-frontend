@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">Xss demonstration</string>
-    <string name="title_activity_main">Xss demonstration</string>
-    <string name="package_name">pl.web_attacks</string>
-    <string name="custom_url_scheme">pl.web_attacks</string>
-</resources>

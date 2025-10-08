@@ -37,7 +37,7 @@ export default defineRouter(function ({ store, ssrContext }) {
   const userStore = useUserStore(store)
 
   Router.beforeEach(async (to, from, next) => {
-    if (!process.env.SERVER || !ssrContext) {
+    if (!ssrContext) {
       await userStore.fetchUserData()
     }
 
